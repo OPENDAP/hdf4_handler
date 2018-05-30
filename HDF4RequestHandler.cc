@@ -148,13 +148,13 @@ string HDF4RequestHandler::_cache_metadata_path            ="";
 
 HDF4RequestHandler::HDF4RequestHandler(const string & name) :
 	BESRequestHandler(name) {
-	add_handler(DAS_RESPONSE, HDF4RequestHandler::hdf4_build_das);
-	add_handler(DDS_RESPONSE, HDF4RequestHandler::hdf4_build_dds);
-	add_handler(DATA_RESPONSE, HDF4RequestHandler::hdf4_build_data);
-	add_handler(DMR_RESPONSE, HDF4RequestHandler::hdf4_build_dmr);
-	add_handler(DAP4DATA_RESPONSE, HDF4RequestHandler::hdf4_build_dmr);
-	add_handler(HELP_RESPONSE, HDF4RequestHandler::hdf4_build_help);
-	add_handler(VERS_RESPONSE, HDF4RequestHandler::hdf4_build_version);
+	add_method(DAS_RESPONSE, HDF4RequestHandler::hdf4_build_das);
+	add_method(DDS_RESPONSE, HDF4RequestHandler::hdf4_build_dds);
+	add_method(DATA_RESPONSE, HDF4RequestHandler::hdf4_build_data);
+	add_method(DMR_RESPONSE, HDF4RequestHandler::hdf4_build_dmr);
+	add_method(DAP4DATA_RESPONSE, HDF4RequestHandler::hdf4_build_dmr);
+	add_method(HELP_RESPONSE, HDF4RequestHandler::hdf4_build_help);
+	add_method(VERS_RESPONSE, HDF4RequestHandler::hdf4_build_version);
 
         _usecf = check_beskeys("H4.EnableCF");
 

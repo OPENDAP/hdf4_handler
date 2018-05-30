@@ -1,3 +1,5 @@
+*.dir
+
 bes.conf
 bes.with_hdfeos2.conf
 generate_metadata_baseline.sh

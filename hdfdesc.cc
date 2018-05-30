@@ -2111,7 +2111,7 @@ bool read_das_hdfsp(DAS & das, const string & filename, int32 sdfd, int32 fileid
 
         // Errors returned from here are ignored.
         if (arg.status() == false) {
-            (*BESLog::TheLog()) << "Parse error while processing a CoreMetadata attribute. (2) " << endl;
+            LOG("Parse error while processing a CoreMetadata attribute. (2) " << endl);
         //        << arg.error()->get_error_message() << endl;
         }
 
@@ -2557,7 +2557,7 @@ bool read_das_special_eos2_core(DAS &das,HDFSP::File* f,const string& filename,b
 
         // Errors returned from here are ignored.
         if (arg.status() == false) {
-            (*BESLog::TheLog()) << "Parse error while processing a CoreMetadata attribute. (2)" << endl;
+            LOG("Parse error while processing a CoreMetadata attribute. (2)" << endl);
 //                << arg.error()->get_error_message() << endl;
         }
 
@@ -3945,7 +3945,7 @@ static void Vgroup_descriptions(DDS & dds, DAS & das,
                 sdmap[ref].in_vgroup = true;
                 break;
             default:
-                (*BESLog::TheLog()) << "unknown tag: " << tag << " ref: " << ref << endl;
+                LOG("unknown tag: " << tag << " ref: " << ref << endl);
                 // TODO: Make this an exception? jhrg 8/19/11
                 // Don't make an exception. Possibly you will meet other valid tags. Need to know if it
                 // is worth to tackle this. KY 09/13/12
