@@ -649,19 +649,17 @@ namespace HDFEOS2
             /// GDgetfillvalue.
             void ReadFields (int32 (*entries) (int32, int32, int32 *),
                 int32 (*inq) (int32, char *, int32 *, int32 *),
-                intn (*fldinfo) (int32, char *, int32 *, int32 *,
-                int32 *, char *),
-                intn (*readfld) (int32, char *, int32 *, int32 *,
-                int32 *, VOIDP),
-                intn (*getfill) (int32, char *, VOIDP),
+                intn (*fldinfo) (int32, const char *, int32 *, int32 *, int32 *, char *),
+                intn (*) (int32, const char *, int32 *, int32 *, int32 *, VOIDP),
+                intn (*getfill) (int32, const char *, VOIDP),
                 bool geofield, std::vector < Field * >&fields) 
                 throw (Exception);
 
             /// Obtain Grid or Swath attributes by calling EOS2 APIs such as
             /// GDinqattrs, GDattrinfo and GDreadattr.
             void ReadAttributes (int32 (*inq) (int32, char *, int32 *),
-                intn (*attrinfo) (int32, char *, int32 *, int32 *),
-                intn (*readattr) (int32, char *, VOIDP),
+                intn (*attrinfo) (int32, const char *, int32 *, int32 *),
+                intn (*readattr) (int32, const char *, VOIDP),
                 std::vector < Attribute * >&attrs)
                 throw (Exception);
  
@@ -1369,7 +1367,7 @@ bool check_ll_in_coords(const std::string& vname) throw(Exception);
 
             /// Call inquiry functions twice to get a list of strings. 
             static bool ReadNamelist (const char *path,
-                int32 (*inq) (char *, char *, int32 *),
+                int32 (*inq) (const char *, char *, int32 *),
                 std::vector < std::string > &names);
 
 

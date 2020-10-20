@@ -76,19 +76,32 @@ HDFEOS2CFStrField::read ()
         }
     }
 
+    // Moving from HDFEOS 2.20 from 2.19 changed some of the type signatures.
+    // jhrg 10/19/20
+#if 0
     int32 (*openfunc) (char *, intn);
     intn (*closefunc) (int32);
     int32 (*attachfunc) (int32, char *);
     intn (*detachfunc) (int32);
     intn (*fieldinfofunc) (int32, char *, int32 *, int32 *, int32 *, char *);
     intn (*readfieldfunc) (int32, char *, int32 *, int32 *, int32 *, void *);
+#else
+    typedef int32 (*openfunc_t) (const char *, intn);
+    typedef int32 (*attachfunc_t) (int32, const char *);
 
+    int32 (*openfunc) (const char *, intn);
+    intn (*closefunc) (int32);
+    int32 (*attachfunc) (int32, const char *);
+    intn (*detachfunc) (int32);
+    intn (*fieldinfofunc) (int32, const char *, int32 *, int32 *, int32 *, char *);
+    intn (*readfieldfunc) (int32, const char *, int32 *, int32 *, int32 *, void *);
+#endif
 
     // Define function pointers to handle the swath
     if(grid_or_swath == 0) {
-        openfunc = GDopen;
+        openfunc = (openfunc_t)GDopen;
         closefunc = GDclose;
-        attachfunc = GDattach;
+        attachfunc = (attachfunc_t)GDattach;
         detachfunc = GDdetach;
         fieldinfofunc = GDfieldinfo;
         readfieldfunc = GDreadfield;

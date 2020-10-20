@@ -68,17 +68,33 @@ HDFEOS2Array_RealField::read ()
     }
 
     // Define function pointers to handle both grid and swath
+
+    // Moving from HDFEOS 2.20 from 2.19 changed some of the type signatures.
+    // jhrg 10/19/20
+#if 0
     int32 (*openfunc) (char *, intn);
     intn (*closefunc) (int32);
     int32 (*attachfunc) (int32, char *);
     intn (*detachfunc) (int32);
     intn (*fieldinfofunc) (int32, char *, int32 *, int32 *, int32 *, char *);
+    intn (*readfieldfunc) (int32, char *, int32 *, int32 *, int32 *, void *);
+#else
+    typedef int32 (*openfunc_t) (const char *, intn);
+    typedef int32 (*attachfunc_t) (int32, const char *);
+
+    int32 (*openfunc) (const char *, intn);
+    intn (*closefunc) (int32);
+    int32 (*attachfunc) (int32, const char *);
+    intn (*detachfunc) (int32);
+    intn (*fieldinfofunc) (int32, const char *, int32 *, int32 *, int32 *, char *);
+#endif
+
 
     string datasetname;
     if (swathname == "") {
-        openfunc = GDopen;
+        openfunc = (openfunc_t)GDopen;
         closefunc = GDclose;
-        attachfunc = GDattach;
+        attachfunc = (attachfunc_t)GDattach;
         detachfunc = GDdetach;
         fieldinfofunc = GDfieldinfo;
         datasetname = gridname;
@@ -279,8 +295,8 @@ HDFEOS2Array_RealField::write_dap_data_scale_comp(int32 gridid,
     bool check_pass_fileid_key = HDF4RequestHandler::get_pass_fileid();
 
     // Define function pointers to handle both grid and swath
-    intn (*fieldinfofunc) (int32, char *, int32 *, int32 *, int32 *, char *);
-    intn (*readfieldfunc) (int32, char *, int32 *, int32 *, int32 *, void *);
+    intn (*fieldinfofunc) (int32, const char *, int32 *, int32 *, int32 *, char *);
+    intn (*readfieldfunc) (int32, const char *, int32 *, int32 *, int32 *, void *);
 
 
     if (swathname == "") {
@@ -1859,8 +1875,8 @@ HDFEOS2Array_RealField::write_dap_data_disable_scale_comp(int32 gridid,
              <<endl);
 
     // Define function pointers to handle both grid and swath
-    intn (*fieldinfofunc) (int32, char *, int32 *, int32 *, int32 *, char *);
-    intn (*readfieldfunc) (int32, char *, int32 *, int32 *, int32 *, void *);
+    intn (*fieldinfofunc) (int32, const char *, int32 *, int32 *, int32 *, char *);
+    intn (*readfieldfunc) (int32, const char *, int32 *, int32 *, int32 *, void *);
 
 
     if (swathname == "") {

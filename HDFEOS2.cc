@@ -5,6 +5,11 @@
 // Copyright (c) 2009 The HDF Group
 /////////////////////////////////////////////////////////////////////////////
 
+#ifdef __JETBRAINS_IDE__
+// Stuff that only clion will see goes here
+#define USE_HDFEOS2_LIB 1
+#endif
+
 #ifdef USE_HDFEOS2_LIB
 
 //#include <BESDEBUG.h> // Should provide BESDebug info. later
@@ -20,6 +25,15 @@
 #include "HDFCFUtil.h"
 #include "HDFEOS2.h"
 #include "HDF4RequestHandler.h"
+
+// These are used to cast the GD* function pointers when those are passed
+// to functions. HDFEOS2.20 added 'const' to some of the char* args, but
+// only for the Swath part of the API, not the Grid. It seems they should
+// have made teh edit symetric. jhrg 10/19/20
+typedef int32 (*inqfunc_t)(const char *, char *, int32 *);
+typedef intn (*attrfunc_t)(int32, const char *, int32 *, int32 *);
+typedef int (*read_attrfunc_t)(int, const char *, void *);
+typedef int (*fillfunc_t)(int, const char *, void *);
 
 // Names to be searched by
 //   get_geodim_x_name()
@@ -142,7 +156,7 @@ File * File::Read(const char *path, int32 mygridfd, int32 myswathfd) throw(Excep
 #endif
 
     vector<string> gridlist;
-    if (!Utility::ReadNamelist(file->path.c_str(), GDinqgrid, gridlist)) {
+    if (!Utility::ReadNamelist(file->path.c_str(), (inqfunc_t)GDinqgrid, gridlist)) {
         delete file;
         throw1("Grid ReadNamelist failed.");
     }
@@ -187,7 +201,7 @@ File * File::Read(const char *path, int32 mygridfd, int32 myswathfd) throw(Excep
     // other information of these objects.
     // The client will only get the name list of point objects.
     vector<string> pointlist;
-    if (!Utility::ReadNamelist(file->path.c_str(), PTinqpoint, pointlist)){
+    if (!Utility::ReadNamelist(file->path.c_str(), (inqfunc_t)PTinqpoint, pointlist)){
         delete file;
         throw1("Point ReadNamelist failed.");
     }
@@ -3278,11 +3292,9 @@ void Dataset::ReadDimensions(int32 (*entries)(int32, int32, int32 *),
 // Retrieve data field info.
 void Dataset::ReadFields(int32 (*entries)(int32, int32, int32 *),
                          int32 (*inq)(int32, char *, int32 *, int32 *),
-                         intn (*fldinfo)
-                         (int32, char *, int32 *, int32 *, int32 *, char *),
-                         intn (*readfld) //unused SBL 2/7/20
-                         (int32, char *, int32 *, int32 *, int32 *, VOIDP),
-                         intn (*getfill)(int32, char *, VOIDP),
+                         intn (*fldinfo)(int32, const char *, int32 *, int32 *, int32 *, char *),
+                         intn (*) (int32, const char *, int32 *, int32 *, int32 *, VOIDP), //unused SBL 2/7/20
+                         intn (*getfill)(int32, const char *, VOIDP),
                          bool geofield,
                          vector<Field *> &fields) throw(Exception)
 {
@@ -3380,8 +3392,8 @@ void Dataset::ReadFields(int32 (*entries)(int32, int32, int32 *),
 
 // Retrieve attribute info.
 void Dataset::ReadAttributes(int32 (*inq)(int32, char *, int32 *),
-                             intn (*attrinfo)(int32, char *, int32 *, int32 *),
-                             intn (*readattr)(int32, char *, VOIDP),
+                             intn (*attrinfo)(int32, const char *, int32 *, int32 *),
+                             intn (*readattr)(int32, const char *, VOIDP),
                              vector<Attribute *> &obj_attrs) throw(Exception)
 {
     // Initalize the number of attributes to be 0
@@ -3513,10 +3525,10 @@ cleanFail:
 
         // Read all fields of this Grid.
         grid->ReadFields(GDnentries, GDinqfields, GDfieldinfo, GDreadfield,
-                         GDgetfillvalue, false, grid->datafields);
+                         (fillfunc_t)GDgetfillvalue, false, grid->datafields);
 
         // Read all attributes of this Grid.
-        grid->ReadAttributes(GDinqattrs, GDattrinfo, GDreadattr, grid->attrs);
+        grid->ReadAttributes(GDinqattrs, (attrfunc_t)GDattrinfo, (read_attrfunc_t)GDreadattr, grid->attrs);
     }
     catch (...) {
         delete grid;
@@ -3882,7 +3894,7 @@ PointDataset * PointDataset::Read(int32 /*fd*/, const string &pointname)
 
 // Read name list from the EOS2 APIs and store names into a vector
 bool Utility::ReadNamelist(const char *path,
-                           int32 (*inq)(char *, char *, int32 *),
+                           int32 (*inq)(const char *, char *, int32 *),
                            vector<string> &names)
 {
     char *fname = const_cast<char *>(path);

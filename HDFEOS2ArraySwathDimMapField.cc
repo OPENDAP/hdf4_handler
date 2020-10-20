@@ -74,10 +74,19 @@ HDFEOS2ArraySwathDimMapField::read ()
     }
 
     // Define function pointers to handle both grid and swath
+    // Moving from HDFEOS 2.20 from 2.19 changed some of the type signatures.
+    // jhrg 10/19/20
+#if 0
     int32 (*openfunc) (char *, intn);
     intn (*closefunc) (int32);
     int32 (*attachfunc) (int32, char *);
     intn (*detachfunc) (int32);
+#else
+    int32 (*openfunc) (const char *, intn);
+    intn (*closefunc) (int32);
+    int32 (*attachfunc) (int32, const char *);
+    intn (*detachfunc) (int32);
+#endif
 
     string datasetname;
 
@@ -644,7 +653,7 @@ HDFEOS2ArraySwathDimMapField::write_dap_data_scale_comp(int32 swathid,
     bool check_pass_fileid_key = HDF4RequestHandler::get_pass_fileid();
 
   // Define function pointers to handle both grid and swath
-    intn (*fieldinfofunc) (int32, char *, int32 *, int32 *, int32 *, char *);
+    intn (*fieldinfofunc) (int32, const char *, int32 *, int32 *, int32 *, char *);
 
 
     fieldinfofunc = SWfieldinfo;
@@ -1363,7 +1372,7 @@ HDFEOS2ArraySwathDimMapField::write_dap_data_disable_scale_comp(int32 swathid,
                                                                 vector<int32>& step32) {
 
      // Define function pointers to handle both grid and swath
-    intn (*fieldinfofunc) (int32, char *, int32 *, int32 *, int32 *, char *);
+    intn (*fieldinfofunc) (int32, const char *, int32 *, int32 *, int32 *, char *);
 
     fieldinfofunc = SWfieldinfo;
 

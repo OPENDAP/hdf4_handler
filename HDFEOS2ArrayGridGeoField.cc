@@ -85,11 +85,22 @@ HDFEOS2ArrayGridGeoField::read ()
     // Define function pointers to handle both grid and swath Note: in
     // this code, we only handle grid, implementing this way is to
     // keep the same style as the read functions in other files.
+
+    // Moving from HDFEOS 2.20 from 2.19 changed some of the type signatures.
+    // jhrg 10/19/20
+#if 0
     int32 (*openfunc) (char *, intn);
     int32 (*attachfunc) (int32, char *);
     intn (*detachfunc) (int32);
     intn (*fieldinfofunc) (int32, char *, int32 *, int32 *, int32 *, char *);
     intn (*readfieldfunc) (int32, char *, int32 *, int32 *, int32 *, void *);
+#else
+    int32 (*openfunc) (char *, intn);
+    int32 (*attachfunc) (int32, char *);
+    intn (*detachfunc) (int32);
+    intn (*fieldinfofunc) (int32, const char *, int32 *, int32 *, int32 *, char *);
+    intn (*readfieldfunc) (int32, const char *, int32 *, int32 *, int32 *, void *);
+#endif
 
     string datasetname;
     openfunc      = GDopen;

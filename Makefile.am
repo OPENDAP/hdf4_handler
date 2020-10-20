@@ -29,7 +29,9 @@ LIBADD = hdfclass/libhdfclass.la $(HDFEOS2_LDFLAGS) $(HDFEOS2_LIBS) $(HDF4_LDFLA
 $(BES_DAP_LIBS)
 endif
 
-AM_CPPFLAGS += -DUSE_DAP4 -DMODULE_NAME=\"$(M_NAME)\" -DMODULE_VERSION=\"$(M_VER)\"
+# FIXME renable warnings once the HDFEOS 2.20 lib fix is in. jhrg 10/19/20
+AM_CPPFLAGS += -DUSE_DAP4 -DMODULE_NAME=\"$(M_NAME)\" -DMODULE_VERSION=\"$(M_VER)\" \
+-Wno-vla-extension -Wno-c++1z-extensions
 
 SUBDIRS = hdfclass . bes-testsuite
 # DIST_SUBDIRS = hdfclass bes-testsuite
